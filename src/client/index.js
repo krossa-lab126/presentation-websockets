@@ -54,9 +54,9 @@ socket.on('USERNAME_TAKEN', () => {
 const userElem = document.getElementById('users');
 socket.on('UPDATE_USER_LIST', ({user}) => {
     const usernames = Object.keys(users).map(user => {
-        `<li>${user}</li>`);
+        `<li>${user}</li>`});
     userElem.innerHTML = usernames.join('');
-}
+});
 
 
 
