@@ -43,8 +43,21 @@ socket.on('DRAW_LINE', ({points,color}) => {
 
 
 // TODO 2.1: Emit "LOGIN" event to server
+socket.emit('LOGIN', {username});
 // TODO 2.2: Listen for a username taken event (eg "USERNAME_TAKEN") and prompt for another username
+socket.on('USERNAME_TAKEN', () => {
+    username = prompt('Username ${username} Taken: \n Please Enter New Username');
+    socket.emit('LOGIN', {username});
+});
 // TODO 2.3: Listen for an update user list event (eg "UPDATE_USER_LIST") from server and update user list display
+    
+const userElem = document.getElementById('users');
+socket.on('UPDATE_USER_LIST', ({user}) => {
+    const usernames = Object.keys(users).map(user => {
+        `<li>${user}</li>`});
+    userElem.innerHTML = usernames.join('');
+});
+
 
 
 // TODO 3.1: Create buttons for users, when clicked, only dispatch events to that user
