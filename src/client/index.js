@@ -1,4 +1,5 @@
 import PaintCanvas from './PaintCanvas';
+import io from './socket.io/socket.io';
 // TODO 1.1: import socket.io-client
 
 // initialize paint canvas
@@ -25,10 +26,17 @@ let username = prompt('Enter your username');
 
 // TODO 1.2: create a new socket connection
 // subscribe to canvas events
+var socket = io('http://localhost');
 paintCanvas.subscribe((action, data) => {
   // TODO 1.3: emit events that dispatched by paintCanvas to the server
+    socket.emit(action, data);
 });
 // TODO 1.4: listen for draw events from the server and use paintCanvas.drawLine to draw the points
+
+socket.on('DRAW_LINE', data=> {
+    paintCanvas.drawLine(data.points, data.color);
+});
+
 
 
 // TODO 2.1: Emit "LOGIN" event to server
