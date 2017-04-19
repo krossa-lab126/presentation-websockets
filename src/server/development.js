@@ -1,3 +1,4 @@
+"use strict";
 const Express = require('express');
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -54,9 +55,18 @@ const addUser = (username, id) => {
 // TODO 1.4: listen for draw events and broadcast them to others
 const io = socketIO(server);
 io.on('connection', socket => {
+  let logout;
   socket.on('DRAW_LINE', data => {
     socket.broadcast.emit('EVERYONE_ELSE', data);
-  })
+  });
+  socket.on('LOGIN', username => {
+    if (!Object.prototype.hasOwnProperty.call(users, username)) {
+      logout = addUser(username, socket.id);
+      io.emit('UPDATE_USER_LIST', users);
+    } else {
+      socket.emit('USERNAME_TAKEN');
+    }
+  });
 });
 
 // TODO 2.1: listen for "LOGIN" events and update user object
@@ -64,6 +74,9 @@ io.on('connection', socket => {
 // TODO 2.3: emit "UPDATE_USER_LIST" to all clients
 // TODO 2.4: listen for "disconnect" event and remove user from "users" object
 // TODO 2.5: emit "UPDATE_USER_LIST" after user is removed from "users" object
-
+io.on('disconnect', socket => {
+  if (typeof logout === 'function') logout();
+  io.emit('UPDATE_USER_LIST', users);
+});
 
 // TODO 3.1: Check if a "toUser" is specified and only broadcast to that user
