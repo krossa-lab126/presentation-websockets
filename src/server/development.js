@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const config = require('../../webpack-config/development');
 // TODO 1.1: import socket.io
-
+const socketIO = require('socket.io');
 const DEFAULT_PORT = 3000;
 
 // server port
@@ -52,7 +52,12 @@ const addUser = (username, id) => {
 // TODO 1.2: attach socket to the server instance
 // TODO 1.3: listen for new connections and handle them in the socket callback
 // TODO 1.4: listen for draw events and broadcast them to others
-
+const io = socketIO(server);
+io.on('connection', socket => {
+  socket.on('DRAW_LINE', data => {
+    socket.broadcast.emit('EVERYONE_ELSE', data);
+  })
+});
 
 // TODO 2.1: listen for "LOGIN" events and update user object
 // TODO 2.2: Prevent users from using an existing username
